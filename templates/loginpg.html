@@ -1,0 +1,118 @@
+<html>
+<head>
+	<title>OAuth</title>
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript">
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '1784543425113726',
+      xfbml      : true,
+      version    : 'v2.7'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+
+  // FB.getLoginStatus(function(response) {
+  // if (response.status === 'connected') {
+  //   console.log('Logged in.');
+  // }
+  // else {
+  //   FB.login();
+  // }
+  // });
+
+  function myFacebookLogin() {
+  FB.login(function(){
+    FB.api('/me/feed', 'post', {message: 'Hello, world!'});
+  }, {scope: 'publish_actions'});
+} 
+
+// function getFriends() {
+//     FB.api('/me?fields=id,birthday', function(response) {
+//         if(response.data) {
+//             $.each(response.data,function(index,friend) {
+//                 alert(friend.name + ' has id:' + friend.id);
+//             });
+//         } else {
+//             alert("Error!");
+//         }
+//     });
+// }
+
+  function myDetails() {
+    $.get("https://graph.facebook.com/me?fields=id,name,friends.limit(10){picture{url,is_silhouette},first_name},birthday,email,books.limit(10)&access_token=EAACEdEose0cBAGGJ8SZCFdowncAHVd3xbnuGHHP1AAhw2m4ZCmQV5XruBbOhZCJWuyxD48PntZCnQan8AsY8I8lfcBA1jOxPwdY3bSHFSojHvpI5ScQ0aVGRkRiP74FYFjpmm4vsbva69PpmJgZBmF8v8s102P38O5OIP2SrkZAQZDZD",function(data){
+    var json = data;
+    var details = ' ';
+    var profile_pic;
+    // bday=json.birthday;
+    $("#titled").html("<h4> Details: </h4>");
+    details = 'Name: ' + json.name + '<br />' + 'email: ' + json.email + '<br />' + 'Bday: '+json.birthday + '<br />' + 'Favourite Books: ' + '<ul>'
+  
+
+    for (i=0; i<json.books.data.length; i++){
+      details = details +json.books.data[i].name + '<br />'
+    }
+
+      details = details + '</ul>' + '<br />' + 'Your Friends: ' 
+    $("#details").html(details);
+
+    for(i=0;i<json.friends.data.length;i++){
+      profile_pic = json.friends.data[i].picture.data.url
+      var img = $('<img id="dynamic">');
+      img.attr('src', profile_pic);
+      img.appendTo('#imagediv');
+      var br = $('<br>')
+      br.appendTo('#imagediv')
+      br.appendTo('#imagediv')
+    }
+    // $("#details").text(f_name);
+    });  
+    return true;
+  }
+
+
+</script>
+
+
+	{% block main %}
+ <div>
+ <h1><center>Facebook Authentication</center></h1>
+
+ <p>
+   <ul>
+   {% if user and not user.is_anonymous %}
+      <a>Hello {{ user.get_full_name|default:user.username }}!</a>
+      <p>You have been redirected here after authentication using Facebook.</p>
+      <button onclick = "myDetails()">Click for Details</button>
+      <br>
+      <p>Click here to 
+       <a href="{% url 'auth:logout' %}?next={{ request.path }}">Logout</a>
+      </p>
+      <p id = "titled"></p> 
+      <p id = "details"></p>
+      <div id = "imagediv">
+      </div>
+   {% else %}
+     
+     <button onclick = "myFacebookLogin()">Login to Facebook</button>
+     <br>
+     <br>
+       <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Redirect to app from Facebook</a>
+   {% endif %}
+   </ul>
+ </p>
+ </div>
+{% endblock %}
+
+
+</body>
+</html>
