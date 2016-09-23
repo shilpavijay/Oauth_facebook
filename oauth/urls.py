@@ -4,7 +4,7 @@ from oauth.views import *
 
 urlpatterns = [
 	url(r'^$', home),
-	url(r'', include('social.apps.django_app.urls', namespace='social')),
+	# url(r'', include('social.apps.django_app.urls', namespace='social')),
 	# url(r'^login/$', ulogin),
-	url('', include('django.contrib.auth.urls',namespace='auth')),
+	# url('', include('django.contrib.auth.urls',namespace='auth')),
 ]
