@@ -1,2 +1,2 @@
 # Oauth_facebook
-OAuth using Facebook APIs - Django and JQuery used
+Implemented OAuth using Facebook APIs. Can be plugged into any new Project that requires Authentication on user login.
